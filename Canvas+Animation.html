@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your App Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container text-center">
+        <canvas id="myCanvas" height="700px" width="700px"></canvas>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-xl-12 col-lg-4 col-md-3 col-sm-2 col-xs-2">
+                <input class="form-control" type="number" id="firstInput" placeholder="5-10" value="0">
+            </div>
+            <div class="col-xl-12 col-lg-4 col-md-3 col-sm-2 col-xs-2">
+                <input class="form-control" type="number" id="secondInput" placeholder="5-10" value="0">
+            </div>
+            <div class="col-xl-12 col-lg-4 col-md-3 col-sm-2 col-xs-2">
+                <input class="form-control" type="number" id="thirdInput" placeholder="5-10" value="255">
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <button type="button" class="btn btn-primary col-lg-2 col-md-3 col-xs-7" id="btnGenerate">GENERATE</button>
+        </div>
+    </div>
+
+    <script>
+        window.onload = () => {
+            let canvas = document.getElementById("myCanvas")
+            let context = canvas.getContext('2d')
+
+            let firstInput = document.getElementById("firstInput")
+            let secondInput = document.getElementById("secondInput")
+            let thirdInput = document.getElementById("thirdInput")
+            var imageInput = document.getElementById('imageInput');
+
+            let btnGenerate = document.getElementById("btnGenerate")
+            const img = new Image();
+            var spriteWidth = 384;
+            var spriteHeight = 216;
+            var totalFrames = 13;
+            var currentFrame = 0;
+            var animationInterval;
+
+            btnGenerate.addEventListener('click', () => {
+                validateInput(firstInput);
+                validateInput(secondInput);
+                validateInput(thirdInput);
+
+                img.onload = function () {
+                    // Clear the canvas inside the onload function
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    renderImage();
+                    startAnimation();
+                   
+                    
+
+                }
+
+                img.src = 'circles.png';
+                
+            })
+
+            function validateInput(inputElement) {
+                let inputValue = parseInt(inputElement.value)
+                if (isNaN(inputValue) || inputValue > 255 || inputValue < 0) {
+                    inputElement.classList.add('is-invalid');
+                } else {
+                    inputElement.classList.remove('is-invalid');
+                }
+            }
+
+            function startAnimation() {
+                // Start the animation loop
+                animationInterval = setInterval(animate, 50);
+            }
+
+            function animate() {
+                // Clear the canvas
+                context.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw the current sprite frame
+                context.drawImage(img, currentFrame * spriteWidth, 0, spriteWidth, spriteHeight, 0, 0, spriteWidth, spriteHeight);
+
+                // Move to the next frame
+                currentFrame++;
+
+                // If we reached the end of the frames, reset to the first frame
+                if (currentFrame === totalFrames) {
+                    currentFrame = 0;
+                }
+            }
+
+            function renderImage() {
+                let frame = context.getImageData(0, 0, canvas.width, canvas.height);
+
+                // Define the RGB values for the blue color you want to replace
+                let blueColor = [0, 0, 255];
+
+                // Loop through each pixel and check if it is blue, then replace the color
+                for (let i = 0; i < frame.data.length; i += 4) {
+                    if (frame.data[i] === blueColor[0] &&
+                        frame.data[i + 1] === blueColor[1] &&
+                        frame.data[i + 2] === blueColor[2]) {
+                        // Replace blue color with the input values
+                        frame.data[i] = parseInt(firstInput.value);    // Red component
+                        frame.data[i + 1] = parseInt(secondInput.value);  // Green component
+                        frame.data[i + 2] = parseInt(thirdInput.value);   // Blue component
+                        // frame.data[i + 3] remains unchanged (alpha)
+                    }
+                }
+
+                // Put the modified pixel data back to the canvas
+                context.putImageData(frame, 0, 0);
+            }
+        }
+    </script>
+</body>
+
+</html>
