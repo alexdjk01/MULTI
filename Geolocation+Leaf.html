@@ -1,0 +1,138 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        #map { height: 600px; }
+    </style>
+
+    <script>
+        window.onload= () => {
+            let btnGenerate = document.getElementById("btnGenerate");
+            let firstInput = document.getElementById("firstInput");
+            let secondInput = document.getElementById("secondInput");
+
+            btnGenerate.addEventListener('click', () =>{
+                validate(firstInput,secondInput);
+            })
+
+            function validate(inputOne, inputTwo)
+            {
+                let ok=0;
+                let latitude = parseInt(inputOne.value);
+                let longitude = parseInt(inputTwo.value);
+                if(isNaN(latitude) || latitude < -90 || latitude >90)
+                {
+                    inputOne.classList.add("is-invalid");
+                    ok=1;
+                }
+                else
+                {
+                    inputOne.classList.remove("is-invalid");
+                }
+
+                if(isNaN(longitude) || longitude < -180 || longitude >180)
+                {
+                    inputTwo.classList.add("is-invalid");
+                    ok=1;
+                }
+                else
+                {
+                    inputTwo.classList.remove("is-invalid");
+                }
+
+                console.log(latitude);
+                console.log(longitude);
+                console.log(ok);
+
+                if(ok===0)
+                {
+                    console.log(ok);
+                   if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        const userLat = position.coords.latitude;
+                        const userLon = position.coords.longitude;
+                        initializeMap(latitude, longitude, userLat, userLon);
+                    }, error => {
+                        console.error(`Error getting user location: ${error.message}`);
+                        initializeMap(lat, lon);
+                    });
+                } else {
+                    console.error("Geolocation is not supported by your browser");
+                    initializeMap(lat, lon);
+                }
+                }
+                  
+            }
+
+            function initializeMap(lat,long,userLat,userLong)
+            {
+                var map = L.map('map').setView([lat, long], 12);
+                
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                //add marker
+
+                var markerPoint = L.marker([lat, long]).addTo(map);
+                markerPoint.bindPopup(`Latitude: ${lat} | Longitude: ${long}`).openPopup();
+                if (userLat && userLong) {
+                    var markerUser = L.marker([userLat, userLong]).addTo(map);
+                    markerUser.bindPopup(`Latitude: ${userLat} | Longitude: ${userLong}`).openPopup();
+                }
+                 //After 5 seconds, set view to the user's location
+                 setTimeout(() => {
+                        map.setView([userLat, userLong], 12);
+                    }, 5000);
+
+                    // After 10 seconds, set view to fit both markers
+                    setTimeout(() => {
+                        const bounds = L.latLngBounds([userLat, userLong], [lat, long]);
+                        map.fitBounds(bounds);
+                    }, 10000);
+
+                    // After 15 seconds, draw a purple line between the markers
+                    setTimeout(() => {
+                        const line = L.polyline([[userLat, userLong], [lat, long]], { color: 'purple' }).addTo(map);
+                    }, 15000);
+                
+            }
+           
+
+           
+
+        }
+    </script>
+
+</head>
+<body>
+
+    <div class="container text-center">
+        <div id="map"></div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-xl-4 col-md-3 col-sm-6">
+                <input class="form-control" type="number" id="firstInput" placeholder="-90  90" value="0">
+            </div>
+            <div class="col-xl-4 col-md-3 col-sm-6">
+                <input class="form-control" type="number" id="secondInput" placeholder="-180  180" value="0">
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <button type="button" class="btn btn-primary col-xl-2 col-md-3 col-sm-2" id="btnGenerate">GENERATE</button>
+        </div>
+    </div>
+    
+</body>
+</html>
