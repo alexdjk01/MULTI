@@ -1,0 +1,123 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUIE</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <style>
+        #myCanvas{
+            border:3px solid black;
+        }
+    </style>
+
+    <script>
+        window.onload = () => {
+            let canvas = document.getElementById("myCanvas");
+            let context = canvas.getContext('2d');
+            let btnGenerate = document.getElementById("btnGenerate");
+            let firstInput = document.getElementById("firstInput");
+            let secondInput = document.getElementById("secondInput");
+            let thirdInput = document.getElementById("thirdInput");
+
+            btnGenerate.addEventListener('click', () => {
+                validateInput(firstInput);
+                validateInput(secondInput);
+                validateInput(thirdInput);
+
+               
+            })
+
+            let circles = []; // Array to store drawn circles
+
+            function validateInput(inputElement) {
+                let inputValue = parseInt(inputElement.value);
+                if (isNaN(inputValue) || inputValue < 5 || inputValue > 10) {
+                    // Invalid input, add Bootstrap's is-invalid class
+                    inputElement.classList.add("is-invalid");
+                } else {
+                    // Valid input, remove is-invalid class
+                    inputElement.classList.remove("is-invalid");
+                    resizeCanvas(firstInput);
+                }
+            }
+
+            function resizeCanvas(inputElement)
+            {
+                let number = parseInt(inputElement.value);
+                canvas.height = number*100;
+                canvas.width = number*100;
+            }
+
+        
+
+            function getRandomColor() {
+                // Generate a random hex color code
+                return '#' + Math.floor(Math.random()*4121512).toString(16);
+            }
+
+            canvas.addEventListener('click', (e) =>{
+                let mouseX = e.clientX;
+                let mouseY = e.clientY;
+
+                const canvasRect = canvas.getBoundingClientRect();
+                const canvasX = mouseX - canvasRect.left;
+                const canvasY = mouseY - canvasRect.top;
+
+                //draw Circle 
+
+                context.beginPath();
+                context.arc(canvasX,canvasY,5 * parseInt(secondInput.value),0, 2 * Math.PI);
+                const color = getRandomColor();
+                context.fillStyle = color ;
+                context.fill();
+                context.strokeStyle= "blue";
+                context.stroke();
+
+                circles.push({ x: canvasX, y: canvasY, color: color });
+
+                if (circles.length > parseInt(thirdInput.value)) {
+                    circles.shift();
+                    redrawCircles();
+                }
+            })
+
+            function redrawCircles() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                circles.forEach(circle => {
+                    context.beginPath();
+                    context.arc(circle.x, circle.y, 5 * parseInt(secondInput.value), 0, 2 * Math.PI);
+                    context.fillStyle = circle.color;
+                    context.fill();
+                    context.strokeStyle = 'blue';
+                    context.stroke();
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container text-center">
+            <canvas id="myCanvas" height="500px" width="500px" ></canvas>
+        <div class="row">
+            <div class="col-xl-12 col-lg-4 col-md-3 col-sm-2 col-xs-2">
+                <input class="form-control"  type="number" id="firstInput" placeholder="5-10">
+            </div>
+            <div class="col-xl-12 col-lg-4 col-md-3 col-sm-2 col-xs-2">
+                <input  class="form-control" type="number" id="secondInput" placeholder="5-10">
+            </div>
+            <div class="col-xl-12 col-lg-4 col-md-3 col-sm-2 col-xs-2">
+                <input class="form-control"   type="number" id="thirdInput" placeholder="5-10">
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <button type="button" class="btn btn-primary col-lg-2 col-md-3 col-xs-7 " id="btnGenerate" >GENERATE</button>
+        </div>
+    </div> 
+
+    
+</body>
+</html>
