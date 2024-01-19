@@ -1,0 +1,103 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+<style>
+    #divCanvas{
+        display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+    }
+
+    #canvas{
+        border:2px solid green;
+    }
+
+</style>
+
+<script>
+    window.onload = () => {
+
+        let canvas= document.getElementById('canvas');
+        let context = canvas.getContext('2d');
+        let button = document.getElementById('button');
+        let input = document.getElementById('input');
+        let alert = document.getElementById('alert');
+
+        button.addEventListener('click', () =>{
+            let number = parseInt(input.value);
+            if(number >0 && number <=10)
+            {
+                alert.style.display='none';
+                drawSquare(number);
+            }
+            else
+            {
+                alert.style.display='';
+            }
+        });
+
+        let colors = ['red','yellow','green','blue','purple','magenta'];
+        let cW=canvas.width;
+        let cH=canvas.height;
+
+        function drawSquare(number)
+        {
+            context.clearRect(0,0,cW,cH);
+                let sizeSquare = 10*number;
+                let yPos = cH-10*number;
+                let xPos= (cW/2)- (number*5);
+                for(let i=number;i>0;i--)
+                {
+                    context.beginPath();
+                    if(i<=6)
+                    {
+                        context.fillStyle = colors[i-1];
+                        context.fillRect(xPos,yPos,sizeSquare,sizeSquare);
+                    }
+                    else
+                    {
+                        context.fillStyle = colors[i-colors.length-1];
+                        context.fillRect(xPos,yPos,sizeSquare,sizeSquare);
+                    }
+                    sizeSquare-=10;
+                    yPos-=(i-1)*10
+                    xPos+=5
+                }
+
+                context.stroke();
+
+        }
+
+    }
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+    <div class="canva" id="divCanvas">
+        <canvas height="600px" width="600px" id="canvas"></canvas>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <input type="number" class="col-lg-9 col-md-6 col-sm-12" placeholder="1-10" id="input">
+            <button type="button" class="btn btn-warning col-lg-3 col-md-6 col-sm-12" id="button">submit</button>
+        </div>
+
+        <div class="alert alert-warning" role="alert" style="display:none;" id="alert">
+           Wrong input!
+          </div>
+
+    </div>
+
+
+
+    
+</body>
+</html>

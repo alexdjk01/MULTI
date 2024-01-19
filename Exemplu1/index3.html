@@ -1,0 +1,128 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+    <style>
+
+          
+        #myCanvas
+        {
+            border: 5px dashed pink;
+        }
+    </style>
+
+    <script>
+        window.onload = () =>{
+            let input = document.getElementById('inputNumber');
+        let button = document.getElementById('buttonSubmit');
+        let alert = document.getElementById('alert');
+        let canvas=document.getElementById('myCanvas');
+        let context = canvas.getContext('2d');
+        
+        button.addEventListener('click', ()=>{
+            let number = parseInt(input.value)
+            console.log(number);
+            if(number >0  && number<=10)
+            {
+                drawSquares(number);
+                alert.style.display='none';
+            }
+            else
+            {
+                alert.style.display='';
+            }
+        })
+
+        let colors = 'red, blue, green, yellow, magenta, purple'.split(', ');
+
+        let cH = canvas.height;
+        let cW = canvas.width;
+
+        function drawSquares(number)
+        {
+            // let wh=20*number;
+            // context.clearRect(0,0,cW,cH);
+            // for(let i=number; i>0; i--)
+            // {
+            //     if(i>5)
+            //     {
+            //         context.fillStyle = colors[i% colors.length];
+            //         context.fillRect(cH/2-i*10,cW/2-i*10,wh,wh);
+            //     }
+            //     else
+            //     {
+            //         context.fillStyle=colors[i-1];
+            //         context.fillRect(cH/2-i*10,cW/2-i*10,wh,wh);
+            //     }
+                
+
+            //     wh-=20;
+            // }
+            // context.stroke();
+
+
+            context.clearRect(0,0,cW,cH);
+            let wh=10;
+            let x=0;
+            let y=0;
+            for(let i=1;i<=number;i++)
+            {
+                context.beginPath();
+                if(i<=6)
+                {
+                    context.fillStyle = colors[i-1];
+                    context.fillRect(x,y,wh,wh);
+                }
+                else
+                {
+                    context.fillStyle = colors[i%colors.length-1]
+                    context.fillRect(x,y,wh,wh);
+                }
+                wh+=10;
+                x+=i*10;
+                y+=i*10;
+            }
+
+            context.stroke();
+        }
+
+        }
+
+
+    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+
+</head>
+
+<body style="background-color: black;">
+    
+    <div class="text-center mt-5" id="divCanvas">
+        <canvas height="600px" width="600px" id="myCanvas" ></canvas>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-6 col-sm-12" id="divInput">
+                <input type="number" class="form-control" placeholder="1-10" id="inputNumber">
+            </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-12" id="divInput">
+                <button type="button" class="btn btn-danger w-100" id="buttonSubmit">Submit</button>
+            </div>
+            
+        </div>
+
+        <div class="alert alert-danger" role="alert" style="display: none;" id="alert">
+            Wrong Input!
+          </div>
+    </div>
+
+
+</body>
+</html>
